@@ -1,0 +1,28 @@
+{
+  "name": "CutPanel Pro",
+  "short_name": "CutPanel",
+  "description": "Optimizador de cortes de tableros de melamina para carpinteros",
+  "start_url": "/cutpanel-pro/cutpanel-pro-1.html",
+  "scope": "/cutpanel-pro/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1B3A6B",
+  "theme_color": "#1B3A6B",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": []
+}
