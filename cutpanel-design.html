@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CutPanel Design</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
+:root{--pr:#1B3A6B;--pr2:#2E5090;--ac:#E8820A;--bg:#F0F4F8;--card:#fff;--tx:#1A2B4A;--tx2:#6B7A99;--bd:#DDE3F0;--ok:#10B981;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;max-width:480px;margin:0 auto;}
+.header{background:var(--pr);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(27,58,107,.3);}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#fff;}
+.logo span{color:var(--ac);}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.6);font-weight:500;letter-spacing:1px;margin-top:1px;}
+.lang-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;}
+.screen{display:none;}.screen.on{display:block;}
+/* HOME */
+.home-hero{background:linear-gradient(135deg,var(--pr) 0%,var(--pr2) 100%);padding:32px 20px 40px;text-align:center;}
+.home-icon{font-size:56px;margin-bottom:12px;}
+.home-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:6px;}
+.home-title span{color:var(--ac);}
+.home-sub{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;}
+.home-btns{padding:24px 16px;display:flex;flex-direction:column;gap:14px;}
+.home-btn{border:none;border-radius:14px;padding:20px;cursor:pointer;display:flex;align-items:center;gap:16px;font-family:'Barlow',sans-serif;transition:all .2s;text-align:left;width:100%;}
+.home-btn-new{background:var(--ac);color:#fff;}
+.home-btn-projects{background:var(--card);color:var(--tx);box-shadow:0 2px 8px rgba(27,58,107,.1);}
+.home-btn-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.home-btn-new .home-btn-icon{background:rgba(255,255,255,.2);}
+.home-btn-projects .home-btn-icon{background:var(--bg);}
+.home-btn-text{flex:1;}
+.home-btn-label{font-size:17px;font-weight:800;margin-bottom:3px;}
+.home-btn-desc{font-size:12px;opacity:.8;line-height:1.3;}
+.home-footer{padding:0 16px 24px;text-align:center;}
+.home-footer-brand{font-size:11px;color:var(--tx2);font-weight:600;letter-spacing:.5px;}
+/* CONTENT */
+.content{padding:16px;padding-bottom:32px;}
+.section{background:var(--card);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(27,58,107,.07);}
+.sec-head{background:var(--pr);color:#fff;padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sec-body{padding:14px;}
+.lbl{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.4px;margin-bottom:5px;display:block;}
+.inp{width:100%;border:1.5px solid var(--bd);border-radius:8px;padding:10px 12px;font-size:15px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--bg);outline:none;margin-bottom:12px;}
+.inp:focus{border-color:var(--pr2);background:#fff;}
+.inp-last{margin-bottom:0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+/* FURNITURE */
+.furniture-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.furniture-btn{border:2px solid var(--bd);border-radius:12px;padding:16px 10px;cursor:pointer;text-align:center;background:var(--bg);font-family:'Barlow',sans-serif;transition:all .2s;width:100%;}
+.furniture-btn.on{border-color:var(--ac);background:#FFF5E8;}
+.furniture-btn .ficon{font-size:28px;margin-bottom:6px;}
+.furniture-btn .fname{font-size:12px;font-weight:700;color:var(--tx);}
+.furniture-btn.on .fname{color:var(--ac);}
+/* MODE */
+.mode-row{display:flex;gap:10px;margin-bottom:4px;}
+.mode-btn{flex:1;border:2px solid var(--bd);border-radius:10px;padding:14px 10px;cursor:pointer;text-align:center;background:var(--bg);font-family:'Barlow',sans-serif;transition:all .2s;}
+.mode-btn.on{border-color:var(--pr);background:#EEF2FF;}
+.mode-btn .micon{font-size:24px;margin-bottom:5px;}
+.mode-btn .mname{font-size:12px;font-weight:700;color:var(--tx);}
+.mode-btn .mdesc{font-size:10px;color:var(--tx2);margin-top:2px;line-height:1.3;}
+.mode-btn.on .mname{color:var(--pr);}
+/* BUTTONS */
+.btn{width:100%;padding:15px;border:none;border-radius:10px;font-size:16px;font-weight:800;font-family:'Barlow',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.btn-primary{background:var(--pr);color:#fff;}
+.btn-accent{background:var(--ac);color:#fff;}
+.btn-back{background:var(--card);color:var(--tx);border:1.5px solid var(--bd);}
+/* TOGGLE */
+.tog-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:10px;}
+.tog-info{flex:1;}
+.tog-title{font-size:12px;font-weight:700;color:var(--tx);}
+.tog-desc{font-size:10px;color:var(--tx2);margin-top:1px;}
+.tog-switch{position:relative;width:42px;height:23px;flex-shrink:0;}
+.tog-switch input{display:none;}
+.tog-slider{position:absolute;inset:0;background:var(--bd);border-radius:12px;cursor:pointer;transition:.3s;}
+.tog-slider::before{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tog-switch input:checked + .tog-slider{background:var(--ac);}
+.tog-switch input:checked + .tog-slider::before{transform:translateX(19px);}
+/* TOPBAR */
+.topbar{background:var(--pr);padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.back-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.topbar-title{font-size:16px;font-weight:700;color:#fff;}
+/* INFO BOX */
+.info-box{background:#EEF2FF;border-radius:8px;padding:8px 12px;font-size:11px;color:var(--pr2);margin-bottom:10px;}
+/* PROJECTS */
+.proj-card{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(27,58,107,.07);display:flex;align-items:center;gap:12px;}
+.proj-icon{font-size:28px;}
+.proj-info{flex:1;}
+.proj-name{font-size:15px;font-weight:700;}
+.proj-meta{font-size:11px;color:var(--tx2);margin-top:3px;}
+.proj-status{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.status-process{background:#FEF3C7;color:#92400E;}
+.status-done{background:#D1FAE5;color:#065F46;}
+.empty{text-align:center;padding:40px 20px;color:var(--tx2);}
+.empty .ei{font-size:48px;margin-bottom:12px;}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:var(--pr);color:#fff;padding:8px 6px;text-align:left;font-size:11px;}
+.tbl td{padding:8px 6px;border-bottom:1px solid var(--bd);font-size:12px;}
+.tbl tr:last-child td{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen on" id="screen-home">
+  <div class="header">
+    <div>
+      <div class="logo">Cut<span>Panel</span> Design</div>
+      <div class="logo-sub">by CarpeDiem Studio</div>
+    </div>
+    <button class="lang-btn" onclick="cycleLang()">🌐 <span id="langLabel">ES</span></button>
+  </div>
+  <div class="home-hero">
+    <div class="home-icon">🪵✏️</div>
+    <div class="home-title">Cut<span>Panel</span> Design</div>
+    <div class="home-sub">Diseñá muebles a medida y exportá directo a CutPanel Pro</div>
+  </div>
+  <div class="home-btns">
+    <button class="home-btn home-btn-new" onclick="goNuevo()">
+      <div class="home-btn-icon">🆕</div>
+      <div class="home-btn-text">
+        <div class="home-btn-label">Nuevo proyecto</div>
+        <div class="home-btn-desc">Diseñá un mueble desde cero o elegí de la biblioteca</div>
+      </div>
+      <div style="font-size:20px;color:rgba(255,255,255,.6)">›</div>
+    </button>
+    <button class="home-btn home-btn-projects" onclick="goProjects()">
+      <div class="home-btn-icon">📁</div>
+      <div class="home-btn-text">
+        <div class="home-btn-label">Mis proyectos</div>
+        <div class="home-btn-desc">Accedé a tus diseños guardados</div>
+      </div>
+      <div style="font-size:20px;color:var(--tx2)">›</div>
+    </button>
+  </div>
+  <div class="home-footer"><div class="home-footer-brand">CarpeDiem Studio © 2026</div></div>
+</div>
+
+<!-- NUEVO PROYECTO -->
+<div class="screen" id="screen-nuevo">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">‹</button>
+    <div class="topbar-title">Nuevo proyecto</div>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="sec-head">👤 Datos del proyecto</div>
+      <div class="sec-body">
+        <label class="lbl">CLIENTE</label>
+        <input class="inp" id="p-cliente" placeholder="ej: García">
+        <label class="lbl">FECHA</label>
+        <input class="inp" id="p-fecha" type="date">
+        <label class="lbl">NOMBRE DEL PROYECTO</label>
+        <input class="inp inp-last" id="p-nombre" placeholder="ej: Placard habitación principal">
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-head">🪵 Tipo de mueble</div>
+      <div class="sec-body">
+        <div class="furniture-grid">
+          <button class="furniture-btn on" onclick="selFurniture(this,'placard')"><div class="ficon">🚪</div><div class="fname">Placard</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'cocina')"><div class="ficon">🍳</div><div class="fname">Cocina</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'biblioteca')"><div class="ficon">📚</div><div class="fname">Biblioteca</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'bajo_cama')"><div class="ficon">🛏️</div><div class="fname">Bajo cama</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'escritorio')"><div class="ficon">🖥️</div><div class="fname">Escritorio</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'mesa')"><div class="ficon">🛋️</div><div class="fname">Mesa</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'bano')"><div class="ficon">🚿</div><div class="fname">Baño</div></button>
+          <button class="furniture-btn" onclick="selFurniture(this,'custom')"><div class="ficon">✏️</div><div class="fname">Personalizado</div></button>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-head">✏️ Modo de diseño</div>
+      <div class="sec-body">
+        <div class="mode-row">
+          <button class="mode-btn on" onclick="selMode(this,'rapido')">
+            <div class="micon">📐</div>
+            <div class="mname">Precarga rápida</div>
+            <div class="mdesc">Ingresá medidas y la app genera el mueble</div>
+          </button>
+          <button class="mode-btn" onclick="selMode(this,'libre')">
+            <div class="micon">✏️</div>
+            <div class="mname">Dibujo libre</div>
+            <div class="mdesc">Dibujá pieza por pieza o a mano alzada</div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-accent" onclick="empezarDiseno()">▶ Empezar diseño</button>
+    <button class="btn btn-back" onclick="goHome()">‹ Volver</button>
+  </div>
+</div>
+
+<!-- PLACARD PRECARGA -->
+<div class="screen" id="screen-placard">
+  <div class="topbar">
+    <button class="back-btn" onclick="goNuevo()">‹</button>
+    <div class="topbar-title">🚪 Placard</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="sec-head">📐 Medidas generales</div>
+      <div class="sec-body">
+        <div class="grid3">
+          <div><label class="lbl">ALTO (mm)</label><input class="inp inp-last" id="pl-alto" type="number" placeholder="2400"></div>
+          <div><label class="lbl">ANCHO (mm)</label><input class="inp inp-last" id="pl-ancho" type="number" placeholder="1800"></div>
+          <div><label class="lbl">PROF. (mm)</label><input class="inp inp-last" id="pl-prof" type="number" placeholder="600"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">🚪 Puertas</div>
+      <div class="sec-body">
+        <label class="lbl">CANTIDAD DE PUERTAS</label>
+        <input class="inp" id="pl-p-cant" type="number" placeholder="2" min="0">
+        <div class="grid2">
+          <div><label class="lbl">LUZ ALTO (mm)</label><input class="inp inp-last" id="pl-p-luz-alto" type="number" placeholder="3"></div>
+          <div><label class="lbl">LUZ ANCHO (mm)</label><input class="inp inp-last" id="pl-p-luz-ancho" type="number" placeholder="3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">🗂️ Cajones</div>
+      <div class="sec-body">
+        <label class="lbl">CANTIDAD DE CAJONES</label>
+        <div style="font-size:10px;color:var(--tx2);margin-bottom:6px">La cantidad de tapas es igual a la de cajones</div>
+        <input class="inp" id="pl-c-cant" type="number" placeholder="0" min="0">
+        <div class="grid2">
+          <div><label class="lbl">LUZ TAPAS ALTO (mm)</label><input class="inp inp-last" id="pl-c-luz-alto" type="number" placeholder="3"></div>
+          <div><label class="lbl">LUZ TAPAS ANCHO (mm)</label><input class="inp inp-last" id="pl-c-luz-ancho" type="number" placeholder="3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">📏 Interior</div>
+      <div class="sec-body">
+        <label class="lbl">ESTANTES INTERNOS</label>
+        <input class="inp" id="pl-e-cant" type="number" placeholder="3" min="0">
+
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-title">Dividir en espacios iguales</div>
+            <div class="tog-desc">La app calcula la luz automáticamente</div>
+          </div>
+          <label class="tog-switch">
+            <input type="checkbox" id="pl-e-auto" checked onchange="toggleEstantesAuto()">
+            <span class="tog-slider"></span>
+          </label>
+        </div>
+
+        <div id="e-manual" style="display:none">
+          <label class="lbl">LUZ ENTRE ESTANTES (mm)</label>
+          <input class="inp" id="pl-e-luz" type="number" placeholder="3">
+        </div>
+        <div id="e-auto-info" class="info-box">📐 La luz se calcula automáticamente dividiendo el espacio en partes iguales</div>
+
+        <div class="grid2">
+          <div><label class="lbl">DIVISORES VERTICALES</label><input class="inp inp-last" id="pl-d-cant" type="number" placeholder="0" min="0"></div>
+          <div><label class="lbl">LUZ ENTRE VERT. (mm)</label><input class="inp inp-last" id="pl-d-luz" type="number" placeholder="3"></div>
+        </div>
+
+        <div class="tog-row" style="margin-top:10px">
+          <div class="tog-info">
+            <div class="tog-title">División central</div>
+            <div class="tog-desc">Panel vertical en el centro del mueble</div>
+          </div>
+          <label class="tog-switch">
+            <input type="checkbox" id="pl-div-central">
+            <span class="tog-slider"></span>
+          </label>
+        </div>
+
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-title">Fondo del mueble</div>
+            <div class="tog-desc">Panel trasero</div>
+          </div>
+          <label class="tog-switch">
+            <input type="checkbox" id="pl-fondo" checked onchange="toggleFondo()">
+            <span class="tog-slider"></span>
+          </label>
+        </div>
+        <div id="fondo-wrap">
+          <label class="lbl">ESPESOR DEL FONDO (mm)</label>
+          <input class="inp inp-last" id="pl-fondo-esp" type="number" placeholder="3" value="3">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">🪵 Material</div>
+      <div class="sec-body">
+        <div class="grid2">
+          <div><label class="lbl">MATERIAL</label><input class="inp inp-last" id="pl-material" placeholder="Melamina blanca"></div>
+          <div><label class="lbl">ESPESOR (mm)</label><input class="inp inp-last" id="pl-espesor" type="number" placeholder="18"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-accent" onclick="generarPlacard()">⚡ Generar placard</button>
+    <button class="btn btn-back" onclick="goNuevo()">‹ Volver</button>
+  </div>
+</div>
+
+<!-- DESPIECE -->
+<div class="screen" id="screen-despiece">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('screen-placard')">‹</button>
+    <div class="topbar-title">📋 Despiece generado</div>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="sec-head">📋 Lista de piezas — Total: <span id="total-piezas">0</span></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>#</th><th>Largo</th><th>Ancho</th><th>Cant.</th><th>Nombre</th><th>Material</th>
+            </tr>
+          </thead>
+          <tbody id="despiece-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <button class="btn btn-accent" onclick="exportarCutPanel()">✂️ Exportar a CutPanel Pro</button>
+    <button class="btn btn-primary" onclick="alert('Exportar PDF — próximamente')">📄 Exportar PDF</button>
+    <button class="btn btn-back" onclick="goScreen('screen-placard')">‹ Volver a editar</button>
+  </div>
+</div>
+
+<!-- MIS PROYECTOS -->
+<div class="screen" id="screen-projects">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">‹</button>
+    <div class="topbar-title">📁 Mis proyectos</div>
+  </div>
+  <div class="content">
+    <div id="projects-list"></div>
+    <button class="btn btn-accent" onclick="goNuevo()">+ Nuevo proyecto</button>
+  </div>
+</div>
+
+<script>
+// STATE
+var lang = 'es';
+var LORDER = ['es','en','it','pt'];
+var selFurnitureType = 'placard';
+var selModeType = 'rapido';
+var projects = [];
+try { projects = JSON.parse(localStorage.getItem('cpd_projects') || '[]'); } catch(e) { projects = []; }
+var generatedPieces = [];
+
+// NAV
+function goHome(){ goScreen('screen-home'); }
+function goNuevo(){ goScreen('screen-nuevo'); }
+function goProjects(){ renderProjects(); goScreen('screen-projects'); }
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// LANG
+function cycleLang(){
+  lang = LORDER[(LORDER.indexOf(lang)+1) % LORDER.length];
+  document.getElementById('langLabel').textContent = lang.toUpperCase();
+}
+
+// FURNITURE
+function selFurniture(btn, type){
+  document.querySelectorAll('.furniture-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  selFurnitureType = type;
+}
+
+// MODE
+function selMode(btn, mode){
+  document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  selModeType = mode;
+}
+
+// TOGGLES
+function toggleEstantesAuto(){
+  var auto = document.getElementById('pl-e-auto').checked;
+  document.getElementById('e-manual').style.display = auto ? 'none' : 'block';
+  document.getElementById('e-auto-info').style.display = auto ? 'block' : 'none';
+}
+
+function toggleFondo(){
+  var on = document.getElementById('pl-fondo').checked;
+  document.getElementById('fondo-wrap').style.display = on ? 'block' : 'none';
+}
+
+// EMPEZAR DISEÑO
+function empezarDiseno(){
+  var cliente = document.getElementById('p-cliente').value.trim();
+  var nombre = document.getElementById('p-nombre').value.trim();
+  if(!cliente){ alert('Ingresá el nombre del cliente'); return; }
+  if(!nombre){ alert('Ingresá el nombre del proyecto'); return; }
+
+  if(selModeType === 'rapido'){
+    if(selFurnitureType === 'placard'){
+      goScreen('screen-placard');
+    } else {
+      alert('Este tipo de mueble estará disponible próximamente');
+    }
+  } else {
+    alert('El modo dibujo libre estará disponible próximamente');
+  }
+}
+
+// GENERAR PLACARD
+function generarPlacard(){
+  try {
+  var alto = parseFloat(document.getElementById('pl-alto').value);
+  var ancho = parseFloat(document.getElementById('pl-ancho').value);
+  var prof = parseFloat(document.getElementById('pl-prof').value);
+
+  if(!alto || !ancho || !prof){
+    alert('Ingresá alto, ancho y profundidad');
+    return;
+  }
+
+  var espesor = parseFloat(document.getElementById('pl-espesor').value) || 18;
+  var material = document.getElementById('pl-material').value || 'Melamina';
+  var pCant = parseInt(document.getElementById('pl-p-cant').value) || 0;
+  var pLuzAlto = parseFloat(document.getElementById('pl-p-luz-alto').value) || 3;
+  var pLuzAncho = parseFloat(document.getElementById('pl-p-luz-ancho').value) || 3;
+  var cCant = parseInt(document.getElementById('pl-c-cant').value) || 0;
+  var cLuzAlto = parseFloat(document.getElementById('pl-c-luz-alto').value) || 3;
+  var cLuzAncho = parseFloat(document.getElementById('pl-c-luz-ancho').value) || 3;
+  var eCant = parseInt(document.getElementById('pl-e-cant').value) || 0;
+  var eAuto = document.getElementById('pl-e-auto').checked;
+  var eLuz = parseFloat(document.getElementById('pl-e-luz').value) || 3;
+  var dCant = parseInt(document.getElementById('pl-d-cant').value) || 0;
+  var dLuz = parseFloat(document.getElementById('pl-d-luz').value) || 3;
+  var divCentral = document.getElementById('pl-div-central').checked;
+  var conFondo = document.getElementById('pl-fondo').checked;
+  var fondoEsp = parseFloat(document.getElementById('pl-fondo-esp').value) || 3;
+
+  var piezas = [];
+  var anchoInterno = ancho - espesor * 2;
+  var altoInterno = alto - espesor * 2;
+
+  // Laterales
+  piezas.push({ nombre: 'Lateral', largo: alto, ancho: prof, cantidad: 2, material: material, espesor: espesor });
+
+  // Techo y piso
+  piezas.push({ nombre: 'Techo', largo: anchoInterno, ancho: prof, cantidad: 1, material: material, espesor: espesor });
+  piezas.push({ nombre: 'Piso', largo: anchoInterno, ancho: prof, cantidad: 1, material: material, espesor: espesor });
+
+  // División central
+  if(divCentral){
+    piezas.push({ nombre: 'División central', largo: altoInterno, ancho: prof, cantidad: 1, material: material, espesor: espesor });
+  }
+
+  // Divisores verticales
+  if(dCant > 0){
+    piezas.push({ nombre: 'Divisor vertical', largo: altoInterno - dLuz, ancho: prof, cantidad: dCant, material: material, espesor: espesor });
+  }
+
+  // Estantes
+  if(eCant > 0){
+    var seccionesH = 1 + (divCentral ? 1 : 0) + dCant;
+    var anchoEstante = Math.round((anchoInterno - espesor * (seccionesH - 1) - dCant * dLuz) / seccionesH);
+    var profEstante = prof - (eAuto ? 0 : eLuz);
+
+    if(eAuto){
+      // Calcular luz automática
+      var espacioDisponible = altoInterno - espesor * eCant;
+      var luzAuto = Math.round(espacioDisponible / (eCant + 1));
+      profEstante = prof;
+    }
+
+    piezas.push({ nombre: 'Estante', largo: anchoEstante, ancho: profEstante, cantidad: eCant * seccionesH, material: material, espesor: espesor });
+  }
+
+  // Fondo
+  if(conFondo){
+    piezas.push({ nombre: 'Fondo', largo: altoInterno, ancho: anchoInterno, cantidad: 1, material: 'Fondo ' + material, espesor: fondoEsp });
+  }
+
+  // Puertas
+  if(pCant > 0){
+    var anchoPuerta = Math.round((ancho - pLuzAncho * (pCant + 1)) / pCant);
+    var altoPuerta = Math.round(alto - pLuzAlto * 2);
+    piezas.push({ nombre: 'Puerta', largo: altoPuerta, ancho: anchoPuerta, cantidad: pCant, material: material, espesor: espesor });
+  }
+
+  // Tapas de cajones
+  if(cCant > 0){
+    var anchoTapa = Math.round(anchoInterno - cLuzAncho * 2);
+    var altoTapa = Math.round((altoInterno * 0.35 - cLuzAlto * (cCant + 1)) / cCant);
+    piezas.push({ nombre: 'Tapa cajón', largo: altoTapa, ancho: anchoTapa, cantidad: cCant, material: material, espesor: espesor });
+  }
+
+  generatedPieces = piezas;
+  mostrarDespiece(piezas);
+  } catch(err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+function mostrarDespiece(piezas){
+  var total = piezas.reduce(function(a, p){ return a + p.cantidad; }, 0);
+  document.getElementById('total-piezas').textContent = total + ' piezas';
+
+  var rows = '';
+  for(var i = 0; i < piezas.length; i++){
+    var p = piezas[i];
+    rows += '<tr>';
+    rows += '<td>' + (i+1) + '</td>';
+    rows += '<td>' + p.largo + '</td>';
+    rows += '<td>' + p.ancho + '</td>';
+    rows += '<td>' + p.cantidad + '</td>';
+    rows += '<td>' + p.nombre + '</td>';
+    rows += '<td style="color:var(--tx2)">' + p.material + ' ' + p.espesor + 'mm</td>';
+    rows += '</tr>';
+  }
+  document.getElementById('despiece-body').innerHTML = rows;
+  goScreen('screen-despiece');
+}
+
+function exportarCutPanel(){
+  alert('✅ Despiece listo para exportar a CutPanel Pro\n\nEsta función conectará automáticamente con CutPanel Pro.');
+}
+
+// PROJECTS
+function renderProjects(){
+  var el = document.getElementById('projects-list');
+  if(projects.length === 0){
+    el.innerHTML = '<div class="empty"><div class="ei">📁</div><p>No tenés proyectos guardados.<br>Tocá "Nuevo proyecto" para empezar.</p></div>';
+    return;
+  }
+  var iconos = {placard:'🚪',cocina:'🍳',biblioteca:'📚',bajo_cama:'🛏️',escritorio:'🖥️',mesa:'🛋️',bano:'🚿',custom:'✏️'};
+  var html = '';
+  for(var i = 0; i < projects.length; i++){
+    var p = projects[i];
+    html += '<div class="proj-card">';
+    html += '<div class="proj-icon">' + (iconos[p.tipo] || '🪵') + '</div>';
+    html += '<div class="proj-info">';
+    html += '<div class="proj-name">' + p.nombre + '</div>';
+    html += '<div class="proj-meta">👤 ' + p.cliente + ' · 📅 ' + p.fecha + '</div>';
+    html += '</div>';
+    html += '<span class="proj-status status-process">' + p.estado + '</span>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+// INIT
+document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
