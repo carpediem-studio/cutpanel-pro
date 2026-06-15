@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CutPanel Design</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@700;800&display=swap');
+:root{
+  --pr:#1B3A6B;--pr2:#2E5090;--ac:#E8820A;--bg:#F0F4F8;
+  --card:#fff;--tx:#1A2B4A;--tx2:#6B7A99;--bd:#DDE3F0;
+  --wood:#C8956B;--wood2:#8B5E3C;--wood3:#F5E6D0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx);max-width:480px;margin:0 auto;min-height:100vh;}
+.screen{display:none;}.screen.on{display:block;}
+
+/* HEADER */
+.hdr{background:var(--pr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#fff;}
+.logo span{color:var(--ac);}
+.logo-s{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;}
+.lang-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;}
+
+/* TOPBAR */
+.topbar{background:var(--pr);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.topbar-t{font-size:14px;font-weight:700;color:#fff;flex:1;}
+.topbar-btn{background:var(--ac);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+
+/* HOME */
+.hero{background:linear-gradient(135deg,var(--pr),var(--pr2));padding:28px 20px 36px;text-align:center;}
+.hero-icon{font-size:50px;margin-bottom:10px;}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff;margin-bottom:5px;}
+.hero-title span{color:var(--ac);}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.7);}
+.home-btns{padding:18px 14px;display:flex;flex-direction:column;gap:10px;}
+.hbtn{border:none;border-radius:14px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:'Barlow',sans-serif;width:100%;text-align:left;}
+.hbtn-new{background:var(--ac);color:#fff;}
+.hbtn-proj{background:var(--card);color:var(--tx);box-shadow:0 2px 8px rgba(27,58,107,.1);}
+.hbtn-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.hbtn-new .hbtn-icon{background:rgba(255,255,255,.2);}
+.hbtn-proj .hbtn-icon{background:var(--bg);}
+.hbtn-label{font-size:15px;font-weight:800;margin-bottom:2px;}
+.hbtn-desc{font-size:11px;opacity:.8;}
+
+/* FORM */
+.cnt{padding:12px;padding-bottom:28px;}
+.sec{background:var(--card);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(27,58,107,.07);}
+.sec-h{background:var(--pr);color:#fff;padding:9px 14px;font-size:12px;font-weight:700;}
+.sec-b{padding:12px;}
+.lbl{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.4px;margin-bottom:4px;display:block;}
+.inp{width:100%;border:1.5px solid var(--bd);border-radius:8px;padding:9px 11px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--bg);outline:none;margin-bottom:10px;}
+.inp:focus{border-color:var(--pr2);background:#fff;}
+.inp0{margin-bottom:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:800;font-family:'Barlow',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+.btn-ac{background:var(--ac);color:#fff;}
+.btn-pr{background:var(--pr);color:#fff;}
+.btn-bk{background:var(--card);color:var(--tx);border:1.5px solid var(--bd);}
+
+/* FURNITURE GRID */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fb{border:2px solid var(--bd);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;background:var(--bg);font-family:'Barlow',sans-serif;width:100%;}
+.fb.on{border-color:var(--ac);background:#FFF5E8;}
+.fb .fi{font-size:24px;margin-bottom:4px;}
+.fb .fn{font-size:11px;font-weight:700;}
+.fb.on .fn{color:var(--ac);}
+
+/* ====================== EDITOR ====================== */
+.editor-wrap{display:flex;flex-direction:column;height:calc(100vh - 52px);}
+
+/* TOOLBAR ELEMENTOS */
+.elem-toolbar{background:var(--pr);padding:8px 10px;display:flex;gap:6px;overflow-x:auto;flex-shrink:0;}
+.elem-tool{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;font-family:'Barlow',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.elem-tool:active{background:var(--ac);border-color:var(--ac);}
+.elem-tool.dragging{opacity:.5;}
+
+/* CANVAS AREA */
+.canvas-scroll{flex:1;overflow:auto;background:#D4C5A9;position:relative;min-height:250px;}
+.canvas-outer{padding:20px;display:flex;align-items:center;justify-content:center;min-height:100%;}
+
+/* MUEBLE SVG CONTAINER */
+#mueble-svg{display:block;touch-action:none;}
+
+/* PANEL INFERIOR */
+.bottom-panel{background:var(--card);border-top:1px solid var(--bd);flex-shrink:0;}
+.bp-elem{padding:10px 14px;display:none;}
+.bp-elem.visible{display:block;}
+.bp-title{font-size:12px;font-weight:700;color:var(--ac);margin-bottom:8px;}
+.bp-row{display:flex;gap:8px;align-items:center;}
+.bp-inp{border:1.5px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:13px;font-family:'Barlow',sans-serif;width:90px;outline:none;}
+.bp-inp:focus{border-color:var(--ac);}
+.bp-lbl{font-size:11px;color:var(--tx2);font-weight:600;}
+.bp-btn{padding:7px 12px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif;cursor:pointer;}
+.bp-ok{background:#10B981;color:#fff;}
+.bp-del{background:#EF4444;color:#fff;}
+.bp-close{background:var(--bd);color:var(--tx);}
+
+/* DESPIECE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{background:var(--pr);color:#fff;padding:7px 5px;text-align:left;font-size:10px;}
+.tbl td{padding:6px 5px;border-bottom:1px solid var(--bd);}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* PROJECTS */
+.pc{background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(27,58,107,.07);}
+.empty{text-align:center;padding:36px 20px;color:var(--tx2);}
+.empty .ei{font-size:44px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen on" id="s-home">
+  <div class="hdr">
+    <div><div class="logo">Cut<span>Panel</span> Design</div><div class="logo-s">by CarpeDiem Studio</div></div>
+    <button class="lang-btn" onclick="cycleLang()">🌐 <span id="langLabel">ES</span></button>
+  </div>
+  <div class="hero">
+    <div class="hero-icon">🪵✏️</div>
+    <div class="hero-title">Cut<span>Panel</span> Design</div>
+    <div class="hero-sub">Diseñá muebles a medida · Exportá a CutPanel Pro</div>
+  </div>
+  <div class="home-btns">
+    <button class="hbtn hbtn-new" onclick="go('s-nuevo')">
+      <div class="hbtn-icon">🆕</div>
+      <div style="flex:1"><div class="hbtn-label">Nuevo proyecto</div><div class="hbtn-desc">Creá un mueble desde cero</div></div>
+      <div style="font-size:18px;opacity:.6">›</div>
+    </button>
+    <button class="hbtn hbtn-proj" onclick="goProjects()">
+      <div class="hbtn-icon">📁</div>
+      <div style="flex:1"><div class="hbtn-label">Mis proyectos</div><div class="hbtn-desc">Accedé a tus diseños guardados</div></div>
+      <div style="font-size:18px;color:var(--tx2)">›</div>
+    </button>
+  </div>
+  <div style="text-align:center;padding-bottom:20px;font-size:11px;color:var(--tx2)">CarpeDiem Studio © 2026</div>
+</div>
+
+<!-- NUEVO PROYECTO -->
+<div class="screen" id="s-nuevo">
+  <div class="topbar"><button class="back" onclick="go('s-home')">‹</button><div class="topbar-t">Nuevo proyecto</div></div>
+  <div class="cnt">
+    <div class="sec">
+      <div class="sec-h">👤 Datos del proyecto</div>
+      <div class="sec-b">
+        <label class="lbl">CLIENTE</label><input class="inp" id="p-cli" placeholder="ej: García">
+        <label class="lbl">FECHA</label><input class="inp" id="p-fecha" type="date">
+        <label class="lbl">NOMBRE</label><input class="inp inp0" id="p-nom" placeholder="ej: Placard habitación">
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-h">🪵 Tipo de mueble</div>
+      <div class="sec-b">
+        <div class="fg">
+          <button class="fb on" onclick="selF(this,'placard')"><div class="fi">🚪</div><div class="fn">Placard</div></button>
+          <button class="fb" onclick="selF(this,'cocina')"><div class="fi">🍳</div><div class="fn">Cocina</div></button>
+          <button class="fb" onclick="selF(this,'biblioteca')"><div class="fi">📚</div><div class="fn">Biblioteca</div></button>
+          <button class="fb" onclick="selF(this,'bajo_cama')"><div class="fi">🛏️</div><div class="fn">Bajo cama</div></button>
+          <button class="fb" onclick="selF(this,'escritorio')"><div class="fi">🖥️</div><div class="fn">Escritorio</div></button>
+          <button class="fb" onclick="selF(this,'mesa')"><div class="fi">🛋️</div><div class="fn">Mesa</div></button>
+          <button class="fb" onclick="selF(this,'bano')"><div class="fi">🚿</div><div class="fn">Baño</div></button>
+          <button class="fb" onclick="selF(this,'custom')"><div class="fi">✏️</div><div class="fn">Personalizado</div></button>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-h">📐 Medidas del mueble</div>
+      <div class="sec-b">
+        <div class="g3">
+          <div><label class="lbl">ALTO (mm)</label><input class="inp inp0" id="m-alto" type="number" placeholder="2200"></div>
+          <div><label class="lbl">ANCHO (mm)</label><input class="inp inp0" id="m-ancho" type="number" placeholder="1800"></div>
+          <div><label class="lbl">PROF. (mm)</label><input class="inp inp0" id="m-prof" type="number" placeholder="600"></div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="g2">
+          <div><label class="lbl">MATERIAL</label><input class="inp inp0" id="m-mat" placeholder="Melamina blanca"></div>
+          <div><label class="lbl">ESPESOR (mm)</label><input class="inp inp0" id="m-esp" type="number" placeholder="18" value="18"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ac" onclick="abrirEditor()">✏️ Diseñar mueble</button>
+    <button class="btn btn-bk" onclick="go('s-home')">‹ Volver</button>
+  </div>
+</div>
+
+<!-- EDITOR DRAG & DROP -->
+<div class="screen" id="s-editor">
+  <div class="topbar">
+    <button class="back" onclick="go('s-nuevo')">‹</button>
+    <div class="topbar-t" id="editor-title">🚪 Diseño</div>
+    <button class="topbar-btn" onclick="go('s-despiece')">Despiece ›</button>
+  </div>
+
+  <div class="editor-wrap">
+    <!-- Barra de elementos para arrastrar -->
+    <div class="elem-toolbar">
+      <div class="elem-tool" draggable="true" ondragstart="dragStart(event,'estante')" ontouchstart="touchDragStart(event,'estante')" onclick="colocarCentro('estante')">📏 Estante</div>
+      <div class="elem-tool" draggable="true" ondragstart="dragStart(event,'divisor')" ontouchstart="touchDragStart(event,'divisor')" onclick="colocarCentro('divisor')">| Divisor</div>
+      <div class="elem-tool" draggable="true" ondragstart="dragStart(event,'puerta')" ontouchstart="touchDragStart(event,'puerta')" onclick="colocarCentro('puerta')">🚪 Puerta</div>
+      <div class="elem-tool" draggable="true" ondragstart="dragStart(event,'cajon')" ontouchstart="touchDragStart(event,'cajon')" onclick="colocarCentro('cajon')">🗂️ Cajón</div>
+      <div class="elem-tool" onclick="undoLast()">↩ Deshacer</div>
+    </div>
+
+    <!-- Canvas de dibujo -->
+    <div class="canvas-scroll" id="canvas-scroll"
+      ondragover="event.preventDefault()">
+      <div class="canvas-outer">
+        <svg id="mueble-svg" xmlns="http://www.w3.org/2000/svg"
+          ondragover="event.preventDefault()"
+          ondrop="dropElem(event)"></svg>
+      </div>
+    </div>
+
+    <!-- Panel elemento seleccionado -->
+    <div class="bottom-panel">
+      <div class="bp-elem" id="bp-elem">
+        <div class="bp-title" id="bp-title">Elemento</div>
+        <div class="bp-row">
+          <span class="bp-lbl" id="bp-lbl1">Posición:</span>
+          <input class="bp-inp" id="bp-val1" type="number">
+          <span class="bp-lbl" id="bp-lbl2">Medida:</span>
+          <input class="bp-inp" id="bp-val2" type="number">
+        </div>
+        <div class="bp-row" style="margin-top:8px">
+          <button class="bp-btn bp-ok" onclick="aplicarElem()">✓ Aplicar</button>
+          <button class="bp-btn bp-del" onclick="eliminarElem()">🗑 Eliminar</button>
+          <button class="bp-btn bp-close" onclick="cerrarPanel()">✕</button>
+        </div>
+      </div>
+      <div style="padding:8px 14px;display:flex;gap:8px" id="bp-hint">
+        <span style="font-size:11px;color:var(--tx2)">👆 Arrastrá elementos desde arriba · Tocá un elemento para editarlo</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESPIECE -->
+<div class="screen" id="s-despiece">
+  <div class="topbar">
+    <button class="back" onclick="go('s-editor')">‹</button>
+    <div class="topbar-t">📋 Despiece</div>
+  </div>
+  <div class="cnt">
+    <div class="sec">
+      <div class="sec-h">📋 Piezas — <span id="total-piezas">0</span></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Nombre</th><th>Largo</th><th>Ancho</th><th>Cant.</th><th>Material</th></tr></thead>
+          <tbody id="despiece-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <button class="btn btn-ac" onclick="exportarCP()">✂️ Exportar a CutPanel Pro</button>
+    <button class="btn btn-pr" onclick="alert('PDF — próximamente')">📄 Exportar PDF</button>
+    <button class="btn btn-bk" onclick="go('s-editor')">‹ Volver al diseño</button>
+  </div>
+</div>
+
+<!-- PROYECTOS -->
+<div class="screen" id="s-projects">
+  <div class="topbar"><button class="back" onclick="go('s-home')">‹</button><div class="topbar-t">📁 Mis proyectos</div></div>
+  <div class="cnt">
+    <div id="proj-list"></div>
+    <button class="btn btn-ac" onclick="go('s-nuevo')">+ Nuevo proyecto</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+var lang = 'es';
+var LORDER = ['es','en','it','pt'];
+var selFType = 'placard';
+var projects = [];
+try{ projects = JSON.parse(localStorage.getItem('cpd_v2') || '[]'); }catch(e){}
+
+var M = { // mueble activo
+  alto:0, ancho:0, prof:0, esp:18, mat:'Melamina',
+  estantes:[], divisores:[], puertas:[], cajones:[]
+};
+
+var SVG_W = 0, SVG_H = 0;
+var SCALE = 1;
+var ESP_PX = 0;
+var elemSel = null;
+var dragType = null;
+var undoStack = [];
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function go(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='s-despiece') calcDespiece();
+}
+function goProjects(){ renderProjects(); go('s-projects'); }
+function cycleLang(){ lang=LORDER[(LORDER.indexOf(lang)+1)%LORDER.length]; document.getElementById('langLabel').textContent=lang.toUpperCase(); }
+function selF(btn,t){ document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); selFType=t; }
+
+// ============================================================
+// ABRIR EDITOR
+// ============================================================
+function abrirEditor(){
+  var cli = document.getElementById('p-cli').value.trim();
+  var nom = document.getElementById('p-nom').value.trim();
+  var alto = parseFloat(document.getElementById('m-alto').value);
+  var ancho = parseFloat(document.getElementById('m-ancho').value);
+  var prof = parseFloat(document.getElementById('m-prof').value);
+  if(!cli){ alert('Ingresá el cliente'); return; }
+  if(!nom){ alert('Ingresá el nombre del proyecto'); return; }
+  if(!alto||!ancho||!prof){ alert('Ingresá alto, ancho y profundidad'); return; }
+
+  M.alto=alto; M.ancho=ancho; M.prof=prof;
+  M.esp=parseFloat(document.getElementById('m-esp').value)||18;
+  M.mat=document.getElementById('m-mat').value||'Melamina';
+  M.estantes=[]; M.divisores=[]; M.puertas=[]; M.cajones=[];
+  undoStack=[];
+
+  document.getElementById('editor-title').textContent = '🚪 '+nom+' — '+alto+'×'+ancho;
+  go('s-editor');
+  setTimeout(function(){ initSVG(); }, 200);
+}
+
+// ============================================================
+// SVG INIT
+// ============================================================
+function initSVG(){
+  var wrap = document.getElementById('canvas-scroll');
+  var availW = Math.min((wrap.offsetWidth || window.innerWidth) - 40, 340);
+  var availH = Math.min(window.innerHeight * 0.50, 350);
+
+  var scaleW = availW / M.ancho;
+  var scaleH = availH / M.alto;
+  SCALE = Math.min(scaleW, scaleH);
+
+  SVG_W = Math.round(M.ancho * SCALE);
+  SVG_H = Math.round(M.alto * SCALE);
+  ESP_PX = Math.round(M.esp * SCALE);
+
+  var svg = document.getElementById('mueble-svg');
+  svg.setAttribute('width', SVG_W);
+  svg.setAttribute('height', SVG_H);
+  svg.style.width = SVG_W+'px';
+  svg.style.height = SVG_H+'px';
+
+  renderSVG();
+}
+
+function mm2px(mm){ return Math.round(mm * SCALE); }
+function px2mm(px){ return Math.round(px / SCALE); }
+// Y: 0=abajo (piso), alto=arriba (techo) — convertir a SVG (0=arriba)
+function mmY2svg(mm){ return SVG_H - mm2px(mm); }
+function svgY2mm(svgY){ return px2mm(SVG_H - svgY); }
+
+// ============================================================
+// RENDER SVG
+// ============================================================
+function renderSVG(){
+  var svg = document.getElementById('mueble-svg');
+  var esp = M.esp;
+  var A = M.alto, AN = M.ancho;
+
+  var html = '';
+
+  // Definiciones
+  html += '<defs>';
+  html += '<pattern id="wood" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">';
+  html += '<rect width="40" height="40" fill="#C8956B"/>';
+  html += '<line x1="0" y1="0" x2="40" y2="40" stroke="#B8855B" stroke-width="1" opacity="0.3"/>';
+  html += '<line x1="0" y1="20" x2="40" y2="60" stroke="#B8855B" stroke-width="0.5" opacity="0.2"/>';
+  html += '</pattern>';
+  html += '</defs>';
+
+  // Fondo interior
+  html += rect(mm2px(esp), mm2px(esp), mm2px(AN-esp*2), mm2px(A-esp*2), '#F5E6D0', '#E0C9A0', 0.5, null);
+
+  // ESTRUCTURA — dibujada como 4 paneles sólidos
+  // Piso (abajo en SVG = alto en coordenadas reales = Y=0)
+  html += rect(0, SVG_H-mm2px(esp), mm2px(AN), mm2px(esp), 'url(#wood)', '#5D3A1A', 2, 'panel-piso');
+  // Techo (arriba en SVG = Y=alto)
+  html += rect(0, 0, mm2px(AN), mm2px(esp), 'url(#wood)', '#5D3A1A', 2, 'panel-techo');
+  // Lateral izquierdo
+  html += rect(0, 0, mm2px(esp), mm2px(A), 'url(#wood)', '#5D3A1A', 2, 'panel-lat-iz');
+  // Lateral derecho
+  html += rect(mm2px(AN-esp), 0, mm2px(esp), mm2px(A), 'url(#wood)', '#5D3A1A', 2, 'panel-lat-der');
+
+  // DIVISORES VERTICALES
+  for(var i=0; i<M.divisores.length; i++){
+    var d = M.divisores[i];
+    var sel = elemSel && elemSel.tipo==='divisor' && elemSel.idx===i;
+    var dx = mm2px(d.pos - esp/2);
+    html += rect(dx, mm2px(esp), mm2px(esp), mm2px(A-esp*2),
+      sel?'#E8820A':'#9B6B3C', sel?'#E8820A':'#5D3A1A', sel?2:1,
+      'div-'+i, 'onclick="selElem(\'divisor\','+i+')"');
+    html += medida(dx+mm2px(esp/2), SVG_H/2, Math.round(d.pos)+'mm', true);
+  }
+
+  // ESTANTES — posición desde el piso (Y=0 real)
+  for(var j=0; j<M.estantes.length; j++){
+    var e = M.estantes[j];
+    var sel2 = elemSel && elemSel.tipo==='estante' && elemSel.idx===j;
+    var ey = mmY2svg(e.pos) - mm2px(esp)/2; // centro del estante en SVG
+    html += rect(mm2px(esp), ey, mm2px(AN-esp*2), mm2px(esp),
+      sel2?'#E8820A':'#A07040', sel2?'#E8820A':'#5D3A1A', sel2?2:1,
+      'est-'+j, 'onclick="selElem(\'estante\','+j+')"');
+    html += medida(mm2px(AN/2), ey+mm2px(esp)/2, Math.round(e.pos)+'mm', false);
+  }
+
+  // PUERTAS
+  for(var k=0; k<M.puertas.length; k++){
+    var p = M.puertas[k];
+    var sel3 = elemSel && elemSel.tipo==='puerta' && elemSel.idx===k;
+    var py = mmY2svg(p.y + p.h);
+    html += rect(mm2px(p.x), py, mm2px(p.w), mm2px(p.h),
+      'rgba(180,120,60,0.55)', sel3?'#E8820A':'#3A2008', sel3?3:2,
+      'pu-'+k, 'onclick="selElem(\'puerta\','+k+')"');
+    // Tirador
+    var tx = mm2px(p.x + p.w*0.1);
+    html += '<line x1="'+tx+'" y1="'+(py+mm2px(p.h)*0.35)+'" x2="'+tx+'" y2="'+(py+mm2px(p.h)*0.65)+'" stroke="#888" stroke-width="3" stroke-linecap="round"/>';
+    html += medida(mm2px(p.x+p.w/2), py+mm2px(p.h)/2, Math.round(p.w)+'×'+Math.round(p.h), false);
+  }
+
+  // CAJONES (tapas frontales)
+  for(var m=0; m<M.cajones.length; m++){
+    var c = M.cajones[m];
+    var sel4 = elemSel && elemSel.tipo==='cajon' && elemSel.idx===m;
+    var cy = mmY2svg(c.y + c.h);
+    html += rect(mm2px(esp+3), cy, mm2px(AN-esp*2-6), mm2px(c.h),
+      'rgba(80,45,15,0.65)', sel4?'#E8820A':'#3A2008', sel4?3:2,
+      'caj-'+m, 'onclick="selElem(\'cajon\','+m+')"');
+    // Tirador
+    var ty = cy + mm2px(c.h)/2;
+    html += '<line x1="'+mm2px(AN*0.35)+'" y1="'+ty+'" x2="'+mm2px(AN*0.65)+'" y2="'+ty+'" stroke="#888" stroke-width="3" stroke-linecap="round"/>';
+    html += medida(mm2px(AN/2), cy+mm2px(c.h)/2, 'Cajón '+Math.round(c.h)+'mm', false);
+  }
+
+  // COTAS exteriores
+  // Ancho total
+  html += cota(0, SVG_H+8, mm2px(AN), SVG_H+8, M.ancho+'mm');
+  // Alto total
+  html += cotaV(SVG_W+8, 0, SVG_W+8, SVG_H, M.alto+'mm');
+
+  // Borde exterior
+  html += '<rect x="0" y="0" width="'+SVG_W+'" height="'+SVG_H+'" fill="none" stroke="#3A2008" stroke-width="3"/>';
+
+  svg.innerHTML = html;
+}
+
+function rect(x,y,w,h,fill,stroke,sw,id,extra){
+  var s = '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'"';
+  s += ' fill="'+fill+'" stroke="'+(stroke||'#5D3A1A')+'" stroke-width="'+(sw||1)+'"';
+  if(id) s += ' id="'+id+'"';
+  if(extra) s += ' style="cursor:pointer" '+extra;
+  s += '/>';
+  return s;
+}
+
+function medida(x,y,txt,vertical){
+  var s = '<g>';
+  s += '<rect x="'+(x-txt.length*3.5)+'" y="'+(y-8)+'" width="'+(txt.length*7)+'" height="14" fill="rgba(255,255,255,0.85)" rx="3"/>';
+  s += '<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-family="Barlow,Arial" font-size="9" font-weight="700" fill="#1B3A6B">'+txt+'</text>';
+  s += '</g>';
+  return s;
+}
+
+function cota(x1,y1,x2,y2,txt){
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#1B3A6B" stroke-width="1" stroke-dasharray="3,2"/>'+
+    medida((x1+x2)/2, y1+4, txt, false);
+}
+function cotaV(x1,y1,x2,y2,txt){
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#1B3A6B" stroke-width="1" stroke-dasharray="3,2"/>'+
+    medida(x1+6, (y1+y2)/2, txt, true);
+}
+
+// ============================================================
+// DRAG & DROP — MOUSE
+// ============================================================
+function dragStart(e, tipo){
+  dragType = tipo;
+  e.dataTransfer.setData('text', tipo);
+}
+
+function dropElem(e){
+  e.preventDefault();
+  e.stopPropagation();
+  var tipo = dragType || e.dataTransfer.getData('text');
+  if(!tipo) return;
+
+  var svg = document.getElementById('mueble-svg');
+  var rect2 = svg.getBoundingClientRect();
+  var svgX = e.clientX - rect2.left;
+  var svgY = e.clientY - rect2.top;
+
+  // Clamp to SVG bounds
+  svgX = Math.max(0, Math.min(SVG_W, svgX));
+  svgY = Math.max(0, Math.min(SVG_H, svgY));
+
+  colocarElem(tipo, svgX, svgY);
+  dragType = null;
+}
+
+// TOUCH DRAG
+var touchDragActive = false;
+var touchDragTipo = null;
+var touchIndicator = null;
+
+function touchDragStart(e, tipo){
+  e.preventDefault();
+  touchDragTipo = tipo;
+  touchDragActive = true;
+
+  // Crear indicador visual
+  if(touchIndicator) document.body.removeChild(touchIndicator);
+  touchIndicator = document.createElement('div');
+  touchIndicator.style.cssText = 'position:fixed;background:var(--ac);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;pointer-events:none;z-index:9999;opacity:0.9;';
+  touchIndicator.textContent = tipo === 'estante' ? '📏 Estante' : tipo === 'divisor' ? '| Divisor' : tipo === 'puerta' ? '🚪 Puerta' : '🗂️ Cajón';
+  document.body.appendChild(touchIndicator);
+
+  document.addEventListener('touchmove', touchDragMove, {passive:false});
+  document.addEventListener('touchend', touchDragEnd, {passive:false});
+}
+
+function touchDragMove(e){
+  e.preventDefault();
+  if(!touchDragActive) return;
+  var touch = e.touches[0];
+  touchIndicator.style.left = (touch.clientX - 40)+'px';
+  touchIndicator.style.top = (touch.clientY - 30)+'px';
+}
+
+function touchDragEnd(e){
+  e.preventDefault();
+  if(!touchDragActive) return;
+
+  var touch = e.changedTouches[0];
+  var svg = document.getElementById('mueble-svg');
+  var r = svg.getBoundingClientRect();
+  var svgX = touch.clientX - r.left;
+  var svgY = touch.clientY - r.top;
+
+  if(touchIndicator){ document.body.removeChild(touchIndicator); touchIndicator=null; }
+  document.removeEventListener('touchmove', touchDragMove);
+  document.removeEventListener('touchend', touchDragEnd);
+
+  if(svgX>=0 && svgX<=SVG_W && svgY>=0 && svgY<=SVG_H){
+    colocarElem(touchDragTipo, svgX, svgY);
+  }
+
+  touchDragActive = false;
+  touchDragTipo = null;
+}
+
+function colocarCentro(tipo){
+  // Place element at center of mueble as fallback
+  colocarElem(tipo, SVG_W/2, SVG_H/2);
+}
+
+function colocarElem(tipo, svgX, svgY){
+  saveHistory();
+  var esp = M.esp;
+  var A = M.alto, AN = M.ancho;
+
+  // Snap to grid (cada 5mm)
+  var mmX = Math.round(px2mm(svgX) / 5) * 5;
+  var mmY = Math.round(svgY2mm(svgY) / 5) * 5;
+
+  if(tipo === 'estante'){
+    mmY = Math.max(esp*2, Math.min(A-esp*2, mmY));
+    M.estantes.push({ pos: mmY });
+    M.estantes.sort(function(a,b){ return a.pos-b.pos; });
+  } else if(tipo === 'divisor'){
+    mmX = Math.max(esp*2, Math.min(AN-esp*2, mmX));
+    M.divisores.push({ pos: mmX });
+    M.divisores.sort(function(a,b){ return a.pos-b.pos; });
+  } else if(tipo === 'puerta'){
+    var anchoPuerta = Math.round((AN - esp*2) / 2);
+    var altoPuerta = A - esp*2;
+    var xPuerta = Math.max(esp, Math.min(AN-esp-anchoPuerta, mmX - anchoPuerta/2));
+    M.puertas.push({ x: xPuerta, y: esp, w: anchoPuerta, h: altoPuerta });
+  } else if(tipo === 'cajon'){
+    var altoCajon = 150;
+    var yCajon = Math.max(esp, Math.min(A-esp-altoCajon, mmY));
+    M.cajones.push({ y: yCajon, h: altoCajon });
+    M.cajones.sort(function(a,b){ return a.y-b.y; });
+  }
+
+  elemSel = null;
+  cerrarPanel();
+  renderSVG();
+}
+
+// ============================================================
+// SELECCION Y EDICION
+// ============================================================
+function selElem(tipo, idx){
+  elemSel = {tipo:tipo, idx:idx};
+  var panel = document.getElementById('bp-elem');
+  var hint = document.getElementById('bp-hint');
+  panel.style.display = 'block';
+  hint.style.display = 'none';
+
+  if(tipo==='estante'){
+    var e = M.estantes[idx];
+    document.getElementById('bp-title').textContent = '📏 Estante #'+(idx+1);
+    document.getElementById('bp-lbl1').textContent = 'Pos. desde piso (mm):';
+    document.getElementById('bp-val1').value = Math.round(e.pos);
+    document.getElementById('bp-lbl2').textContent = 'Esp. (mm):';
+    document.getElementById('bp-val2').value = M.esp;
+  } else if(tipo==='divisor'){
+    var d = M.divisores[idx];
+    document.getElementById('bp-title').textContent = '| Divisor #'+(idx+1);
+    document.getElementById('bp-lbl1').textContent = 'Pos. desde izq. (mm):';
+    document.getElementById('bp-val1').value = Math.round(d.pos);
+    document.getElementById('bp-lbl2').textContent = 'Esp. (mm):';
+    document.getElementById('bp-val2').value = M.esp;
+  } else if(tipo==='puerta'){
+    var p = M.puertas[idx];
+    document.getElementById('bp-title').textContent = '🚪 Puerta #'+(idx+1);
+    document.getElementById('bp-lbl1').textContent = 'Ancho (mm):';
+    document.getElementById('bp-val1').value = Math.round(p.w);
+    document.getElementById('bp-lbl2').textContent = 'Alto (mm):';
+    document.getElementById('bp-val2').value = Math.round(p.h);
+  } else if(tipo==='cajon'){
+    var c = M.cajones[idx];
+    document.getElementById('bp-title').textContent = '🗂️ Cajón #'+(idx+1);
+    document.getElementById('bp-lbl1').textContent = 'Pos. desde piso (mm):';
+    document.getElementById('bp-val1').value = Math.round(c.y);
+    document.getElementById('bp-lbl2').textContent = 'Alto tapa (mm):';
+    document.getElementById('bp-val2').value = Math.round(c.h);
+  }
+  renderSVG();
+}
+
+function aplicarElem(){
+  if(!elemSel) return;
+  saveHistory();
+  var v1 = parseFloat(document.getElementById('bp-val1').value);
+  var v2 = parseFloat(document.getElementById('bp-val2').value);
+  var esp = M.esp;
+
+  if(elemSel.tipo==='estante'){
+    M.estantes[elemSel.idx].pos = Math.max(esp*2, Math.min(M.alto-esp*2, v1));
+    M.estantes.sort(function(a,b){return a.pos-b.pos;});
+  } else if(elemSel.tipo==='divisor'){
+    M.divisores[elemSel.idx].pos = Math.max(esp*2, Math.min(M.ancho-esp*2, v1));
+    M.divisores.sort(function(a,b){return a.pos-b.pos;});
+  } else if(elemSel.tipo==='puerta'){
+    M.puertas[elemSel.idx].w = Math.max(50, v1);
+    M.puertas[elemSel.idx].h = Math.max(50, v2);
+  } else if(elemSel.tipo==='cajon'){
+    M.cajones[elemSel.idx].y = Math.max(esp, Math.min(M.alto-esp*2, v1));
+    M.cajones[elemSel.idx].h = Math.max(50, v2);
+    M.cajones.sort(function(a,b){return a.y-b.y;});
+  }
+  cerrarPanel();
+  renderSVG();
+}
+
+function eliminarElem(){
+  if(!elemSel) return;
+  saveHistory();
+  if(elemSel.tipo==='estante') M.estantes.splice(elemSel.idx,1);
+  else if(elemSel.tipo==='divisor') M.divisores.splice(elemSel.idx,1);
+  else if(elemSel.tipo==='puerta') M.puertas.splice(elemSel.idx,1);
+  else if(elemSel.tipo==='cajon') M.cajones.splice(elemSel.idx,1);
+  elemSel = null;
+  cerrarPanel();
+  renderSVG();
+}
+
+function cerrarPanel(){
+  document.getElementById('bp-elem').style.display = 'none';
+  document.getElementById('bp-hint').style.display = 'flex';
+  elemSel = null;
+  renderSVG();
+}
+
+// ============================================================
+// HISTORIAL (deshacer)
+// ============================================================
+function saveHistory(){
+  undoStack.push(JSON.stringify({
+    estantes: M.estantes.slice(),
+    divisores: M.divisores.slice(),
+    puertas: M.puertas.slice(),
+    cajones: M.cajones.slice()
+  }));
+  if(undoStack.length > 20) undoStack.shift();
+}
+
+function undoLast(){
+  if(undoStack.length === 0){ alert('No hay acciones para deshacer'); return; }
+  var prev = JSON.parse(undoStack.pop());
+  M.estantes = prev.estantes;
+  M.divisores = prev.divisores;
+  M.puertas = prev.puertas;
+  M.cajones = prev.cajones;
+  elemSel = null;
+  cerrarPanel();
+  renderSVG();
+}
+
+// ============================================================
+// CALCULAR DESPIECE
+// ============================================================
+function calcDespiece(){
+  var piezas = [];
+  var esp = M.esp, A = M.alto, AN = M.ancho, PR = M.prof, mat = M.mat;
+  var anchoInt = AN - esp*2;
+  var altoInt = A - esp*2;
+
+  // Estructura
+  piezas.push({n:'Lateral', l:A, a:PR, c:2, mat:mat, e:esp});
+  piezas.push({n:'Techo', l:anchoInt, a:PR, c:1, mat:mat, e:esp});
+  piezas.push({n:'Piso', l:anchoInt, a:PR, c:1, mat:mat, e:esp});
+
+  // Divisores verticales
+  if(M.divisores.length > 0){
+    piezas.push({n:'Divisor vertical', l:altoInt, a:PR, c:M.divisores.length, mat:mat, e:esp});
+  }
+
+  // Calcular módulos
+  var posDiv = [esp];
+  M.divisores.forEach(function(d){ posDiv.push(d.pos); });
+  posDiv.push(AN-esp);
+  posDiv.sort(function(a,b){return a-b;});
+
+  // Estantes por módulo
+  if(M.estantes.length > 0){
+    for(var m=0; m<posDiv.length-1; m++){
+      var anchoMod = Math.round(posDiv[m+1] - posDiv[m] - esp);
+      if(anchoMod > 0){
+        piezas.push({n:'Estante (mód.'+(m+1)+')', l:anchoMod, a:Math.round(PR-5), c:M.estantes.length, mat:mat, e:esp});
+      }
+    }
+  }
+
+  // Puertas
+  if(M.puertas.length > 0){
+    var pu = M.puertas[0];
+    piezas.push({n:'Puerta', l:Math.round(pu.h), a:Math.round(pu.w), c:M.puertas.length, mat:mat, e:esp});
+  }
+
+  // Cajones
+  if(M.cajones.length > 0){
+    var cAlto = M.cajones[0].h;
+    var cInt = 15; // espesor interno cajón
+    piezas.push({n:'Tapa cajón', l:Math.round(cAlto), a:anchoInt-6, c:M.cajones.length, mat:mat, e:esp});
+    piezas.push({n:'Lateral cajón', l:Math.round(PR-cInt), a:Math.round(cAlto-cInt), c:M.cajones.length*2, mat:mat, e:cInt});
+    piezas.push({n:'Frente/contra cajón', l:anchoInt-6-cInt*2, a:Math.round(cAlto-cInt), c:M.cajones.length*2, mat:mat, e:cInt});
+    piezas.push({n:'Piso cajón', l:Math.round(PR-cInt), a:anchoInt-6-cInt*2, c:M.cajones.length, mat:'Fondo '+mat, e:3});
+  }
+
+  var total = piezas.reduce(function(a,p){return a+p.c;},0);
+  document.getElementById('total-piezas').textContent = total+' piezas';
+
+  var rows = '';
+  for(var i=0; i<piezas.length; i++){
+    var p = piezas[i];
+    rows += '<tr><td>'+(i+1)+'</td><td>'+p.n+'</td><td>'+p.l+'</td><td>'+p.a+'</td><td>'+p.c+'</td><td style="color:var(--tx2)">'+p.mat+' '+p.e+'mm</td></tr>';
+  }
+  document.getElementById('despiece-body').innerHTML = rows;
+  window.piezasExport = piezas;
+}
+
+function exportarCP(){
+  alert('✅ Despiece listo para exportar a CutPanel Pro.\n\nPróximamente se conectará automáticamente.');
+}
+
+// ============================================================
+// PROJECTS
+// ============================================================
+function renderProjects(){
+  var el = document.getElementById('proj-list');
+  if(projects.length===0){
+    el.innerHTML='<div class="empty"><div class="ei">📁</div><p>No tenés proyectos guardados.<br>Tocá "Nuevo proyecto" para empezar.</p></div>';
+    return;
+  }
+  var ic={placard:'🚪',cocina:'🍳',biblioteca:'📚',bajo_cama:'🛏️',escritorio:'🖥️',mesa:'🛋️',bano:'🚿',custom:'✏️'};
+  var h='';
+  projects.forEach(function(p){
+    h+='<div class="pc"><div style="font-size:26px">'+(ic[p.tipo]||'🪵')+'</div><div style="flex:1"><div style="font-size:14px;font-weight:700">'+p.nombre+'</div><div style="font-size:10px;color:var(--tx2)">👤 '+p.cliente+'</div></div></div>';
+  });
+  el.innerHTML=h;
+}
+
+// INIT
+document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
