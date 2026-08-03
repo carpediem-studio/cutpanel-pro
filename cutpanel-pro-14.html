@@ -754,10 +754,44 @@ function renderResults(d){
 }
 
 // PDF EXPORT - inline overlay (compatible con Android)
-function iniciarSuscripcion(){
-  // Google Play Billing - se implementa con Play Billing Library en la APK
-  // Por ahora muestra instrucciones
-  alert('Para suscribirte a CutPanel Pro:\n\n1. Descarga la app desde Google Play\n2. Toca "Suscribirse" dentro de la app\n3. Confirma el pago de $4.99/mes\n\nO anual por $39.99 (ahorra 33%)');
+async function iniciarSuscripcion(plan){
+  plan = plan || 'monthly';
+  const subscriptionId = plan === 'yearly' ? 'cutpanel_pro_yearly' : 'cutpanel_pro_monthly';
+
+  if (!window.getDigitalGoodsService) {
+    alert('La suscripción solo está disponible desde la app instalada en Google Play.');
+    return;
+  }
+
+  try {
+    const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+    const request = new PaymentRequest(
+      [{ supportedMethods: 'https://play.google.com/billing',
+         data: { sku: subscriptionId } }],
+      { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } }
+    );
+
+    const paymentResponse = await request.show();
+    const purchaseToken = paymentResponse.details.purchaseToken;
+    await paymentResponse.complete('success');
+
+    const userId = window.getUserId();
+    const result = await window.verifyPurchaseCloud({
+      purchaseToken: purchaseToken,
+      subscriptionId: subscriptionId,
+      userId: userId
+    });
+
+    if (result.data.isPro) {
+      alert('✅ ¡Gracias! Ya sos usuario Pro de CutPanel Pro.');
+      location.reload();
+    } else {
+      alert('La compra no pudo verificarse. Contactanos si el problema persiste.');
+    }
+  } catch (err) {
+    console.error('Error en la suscripción:', err);
+    alert('No se pudo completar la suscripción: ' + err.message);
+  }
   closeOv('proModal');
 }
 
@@ -1075,4 +1109,31 @@ if ('serviceWorker' in navigator) {
   </div>
 </div>
 </body>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDUjQI-7nZxNkwDLqPTvqbipeP5V1-swSU",
+    authDomain: "cutpanel-pro.firebaseapp.com",
+    projectId: "cutpanel-pro",
+    storageBucket: "cutpanel-pro.firebasestorage.app",
+    messagingSenderId: "261447404134",
+    appId: "1:261447404134:web:6457e362e432cab7473ba7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const functions = getFunctions(app);
+  window.verifyPurchaseCloud = httpsCallable(functions, "verifyPurchase");
+
+  function getUserId() {
+    let id = localStorage.getItem('cpp_userId');
+    if (!id) {
+      id = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem('cpp_userId', id);
+    }
+    return id;
+  }
+  window.getUserId = getUserId;
+</script>
 </html>
