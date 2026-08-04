@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.carpediem.cutpanelpro",
+      "sha256_cert_fingerprints": ["37:FC:C5:D3:02:13:B9:2F:7F:09:67:DE:B0:92:F8:C9:59:78:5D:17:D1:1E:77:48:6A:1A:E1:57:21:29:4E:70"]
+    }
+  }
+]
