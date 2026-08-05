@@ -759,7 +759,7 @@ async function iniciarSuscripcion(plan){
   const subscriptionId = plan === 'yearly' ? 'cutpanel_pro_yearly' : 'cutpanel_pro_monthly';
 
   if (!window.getDigitalGoodsService) {
-    alert('La suscripción solo está disponible desde la app instalada en Google Play.');
+    alert('Para suscribirte, necesitás tener Chrome como navegador predeterminado. Andá a Ajustes → Apps → Apps predeterminadas → Navegador → Chrome, y volvé a intentar.');
     return;
   }
 
