@@ -790,7 +790,11 @@ async function iniciarSuscripcion(plan){
     }
   } catch (err) {
     console.error('Error en la suscripción:', err);
-    alert('No se pudo completar la suscripción: ' + err.message);
+    if (err && err.message && (err.message.includes('Invalid state') || err.message.includes('NotSupportedError') || err.message.includes('NotAllowedError'))) {
+      alert('Para suscribirte, necesitás tener Chrome como navegador predeterminado. Andá a Ajustes → Apps → Apps predeterminadas → Navegador → Chrome, y volvé a intentar.');
+    } else {
+      alert('No se pudo completar la suscripción: ' + err.message);
+    }
   }
   closeOv('proModal');
 }
