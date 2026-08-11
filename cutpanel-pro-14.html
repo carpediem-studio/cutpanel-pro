@@ -408,7 +408,18 @@ document.getElementById('hasGrain').addEventListener('change',()=>{
 const COLORS=['#E8820A','#2196F3','#4CAF50','#9C27B0','#F44336','#009688','#FF5722','#607D8B','#E91E63','#3F51B5','#795548','#FFC107'];
 
 // FREE / PRO CONFIG
-const IS_PRO = false; // Cambiar a true cuando el usuario pague
+let IS_PRO = false; // Cambiar a true cuando el usuario pague
+  async function checkProStatus(){
+  try {
+    if (!window.getDigitalGoodsService) return false;
+    const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+    const purchases = await service.listPurchases();
+    return purchases && purchases.length > 0;
+  } catch(e) {
+    console.error('Error verificando estado Pro:', e);
+    return false;
+  }
+}
 const FREE_LIMITS = {
   maxBoards: 8,       // Max tableros por cálculo antes de video ad
   maxProjects: 0,     // Sin proyectos guardados en free
@@ -1014,17 +1025,19 @@ function renderProjects(){
 }
 
 // INIT
-// Ocultar banner AdMob si es Pro
-if(IS_PRO){
-  var banner=document.getElementById('adBanner');
-  if(banner) banner.style.display='none';
-}
-setUnit('mm');setMethod('optimal');
-addRow();addRow();addRow();
-selRow=-1;document.querySelectorAll('#piecesBody tr').forEach(tr=>tr.classList.remove('sel'));
-renderProjects();
-document.getElementById('workDate').value=new Date().toISOString().split('T')[0];
-applyLang();
+(async function initApp(){
+  IS_PRO = await checkProStatus();
+  if(IS_PRO){
+    var banner=document.getElementById('adBanner');
+    if(banner) banner.style.display='none';
+  }
+  setUnit('mm');setMethod('optimal');
+  addRow();addRow();addRow();
+  selRow=-1;document.querySelectorAll('#piecesBody tr').forEach(tr=>tr.classList.remove('sel'));
+  renderProjects();
+  document.getElementById('workDate').value=new Date().toISOString().split('T')[0];
+  applyLang();
+})();
 
 // IMPORTAR DESDE CUTPANEL DESIGN
 (function(){
