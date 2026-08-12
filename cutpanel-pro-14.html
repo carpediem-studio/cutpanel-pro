@@ -215,8 +215,8 @@ td.td-num{color:var(--tx2);font-weight:700;font-size:10px;width:18px;}
       </div>
       <div class="btype-row">
         <span class="btype-label" style="color:var(--pr);font-weight:800">T2</span>
-        <input class="inp" id="bt2name" placeholder="ej: ABS 1mm" style="flex:1" onclick="if(!IS_PRO){showProModal('edge');this.blur();}" readonly>
-        <input class="inp inp-sm" id="bt2thick" type="number" placeholder="1" step="0.01" style="width:60px" onclick="if(!IS_PRO){showProModal('edge');this.blur();}" readonly>
+        <input class="inp" id="bt2name" placeholder="ej: ABS 1mm" style="flex:1" onclick="if(!IS_PRO){showProModal('edge');this.blur();}">
+        <input class="inp inp-sm" id="bt2thick" type="number" placeholder="1" step="0.01" style="width:60px" onclick="if(!IS_PRO){showProModal('edge');this.blur();}">
         <span style="font-size:11px;color:var(--tx2)">mm</span>
         <span onclick="showProModal('edge')" style="background:var(--ac);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;cursor:pointer;white-space:nowrap">⭐ PRO</span>
       </div>
@@ -952,13 +952,23 @@ function exportPDF(){
     ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:999;overflow-y:auto;';
     document.body.appendChild(ov);
   }
-  ov.innerHTML=`<div style="position:sticky;top:0;background:#1B3A6B;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1000">
-    <span style="color:#fff;font-weight:700;font-size:14px">✂️ CutPanel Pro — Reporte</span>
-    <button onclick="document.getElementById('pdfOverlay').style.display='none'" style="background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✕ Cerrar</button>
-  </div>
-  <div style="background:#E8F4FD;border-left:4px solid #2196F3;padding:10px 14px;font-size:12px;color:#1A2B4A;margin:0">
-    💡 <strong>Para guardar como PDF:</strong> tocá los 3 puntos del navegador (⋮) → <strong>Compartir</strong> o <strong>Imprimir</strong>
-  </div>
+  ov.innerHTML=`<style>
+@media print {
+  body > *:not(#pdfOverlay){display:none!important;}
+  .pdf-print-hide{display:none!important;}
+  #pdfOverlay{position:static!important;}
+}
+</style>
+<div style="position:sticky;top:0;background:#1B3A6B;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1000" class="pdf-print-hide">
+<span style="color:#fff;font-weight:700;font-size:14px">✂️ CutPanel Pro — Reporte</span>
+<div style="display:flex;gap:8px">
+<button onclick="window.print()" style="background:#10B981;color:#fff;border:none;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">🖨️ Guardar como PDF</button>
+<button onclick="document.getElementById('pdfOverlay').style.display='none'" style="background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✕ Cerrar</button>
+</div>
+</div>
+<div style="background:#E8F4FD;border-left:4px solid #2196F3;padding:10px 14px;font-size:12px;color:#1A2B4A;margin:0" class="pdf-print-hide">
+💡 <strong>Para guardar como PDF:</strong> tocá el botón verde de arriba y elegí "Guardar como PDF" en el diálogo de impresión.
+</div>
   ${content}`;
   ov.style.display='block';
 }
@@ -1027,6 +1037,10 @@ function renderProjects(){
 // INIT
 (async function initApp(){
   IS_PRO = await checkProStatus();
+  var bt2nameEl=document.getElementById('bt2name');
+var bt2thickEl=document.getElementById('bt2thick');
+if(bt2nameEl) bt2nameEl.readOnly=!IS_PRO;
+if(bt2thickEl) bt2thickEl.readOnly=!IS_PRO;
   if(IS_PRO){
     var banner=document.getElementById('adBanner');
     if(banner) banner.style.display='none';
